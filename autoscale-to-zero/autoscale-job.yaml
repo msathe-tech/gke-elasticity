@@ -26,7 +26,7 @@ spec:
         - sleep
         - "30"
       nodeSelector:
-        gpu: tesla-v100
+        gpu: autoscale-to-zero
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

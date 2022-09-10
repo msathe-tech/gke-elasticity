@@ -17,7 +17,7 @@ gcloud container clusters create ${GKE_CLUSTER_NAME} \
 gcloud container node-pools create ${GKE_BURST_POOL} \
        --cluster=${GKE_CLUSTER_NAME} \
        --machine-type=n1-standard-2 \
-       --node-labels=gpu=tesla-v100 \
+       --node-labels=gpu=autoscale-to-zero \
        --node-taints=reserved-pool=true:NoSchedule  \
        --num-nodes=0 \
        --enable-autoscaling \

@@ -1,0 +1,45 @@
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: burst
+  labels:
+    app: greedy-app
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: greedy-job
+  namespace: burst
+spec:
+  parallelism: 4
+  template:
+    metadata:
+      name: greedy-job
+      labels:
+        app: greedy-app
+    spec:
+      containers:
+      - name: busybox
+        image: busybox
+        args:
+        - sleep
+        - "30"
+      nodeSelector:
+        gpu: tesla-v100
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - greedy-app
+            topologyKey: "kubernetes.io/hostname"
+      tolerations:
+      - key: reserved-pool
+        operator: Equal
+        value: "true"
+        effect: NoSchedule
+      restartPolicy: OnFailure

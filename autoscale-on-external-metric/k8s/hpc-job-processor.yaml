@@ -1,32 +1,25 @@
----
-kind: Namespace
-apiVersion: v1
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: burst
-  labels:
-    app: greedy-app
----
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: greedy-job
-  namespace: burst
+  name: hpc-job-processor
 spec:
-  parallelism: 4
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hpc-job-processor
   template:
     metadata:
-      name: greedy-job
+      name: hpc-job-processor
       labels:
-        app: greedy-app
+        app: hpc-job-processor
     spec:
       containers:
-      - name: busybox
-        image: busybox
-        args:
-        - sleep
-        - "5"
+      - name: hpc-job-processor
+        image: us-east4-docker.pkg.dev/prj-gke-mt-spike/hpc-gke/hpc-job-processor:latest
+        imagePullPolicy: Always
       nodeSelector:
         gpu: autoscale-to-zero
+        iam.gke.io/gke-metadata-server-enabled: "true"
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -35,11 +28,10 @@ spec:
               - key: app
                 operator: In
                 values:
-                - greedy-app
+                - hpc-job-processor
             topologyKey: "kubernetes.io/hostname"
       tolerations:
       - key: reserved-pool
         operator: Equal
         value: "true"
         effect: NoSchedule
-      restartPolicy: OnFailure

@@ -27,3 +27,8 @@ gcloud container node-pools create ${GKE_BURST_POOL} \
        --project=${PROJECT_ID} \
        --node-version="1.24.3-gke.200"
 
+### Deploy the app
+gcloud container clusters get-credentials burstable-cluster \
+--zone us-central1-c --project prj-gke-mt-spike
+
+kubectl create ns burst 

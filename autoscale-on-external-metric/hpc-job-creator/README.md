@@ -27,7 +27,12 @@ This sample requires [Java](https://www.java.com/en/download/) and [Maven](http:
 
 4. Enable application default credentials by running the command `gcloud auth application-default login`.
 
-5. Run the following Maven or Gradle commands to run `PubSubApplication`:
+```
+gcloud auth login --no-launch-browser
+gcloud auth application-default login --no-launch-browser
+```
+
+1. Run the following Maven or Gradle commands to run `PubSubApplication`:
 
     ```
     mvn clean spring-boot:run

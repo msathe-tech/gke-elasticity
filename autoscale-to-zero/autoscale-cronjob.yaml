@@ -1,0 +1,47 @@
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: burst
+  labels:
+    app: greedy-app
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: greedy-cronjob
+  namespace: burst
+spec:
+  schedule: "*/4 * * * *"
+  jobTemplate:
+    spec:
+      parallelism: 4  
+      template:
+        metadata:
+          labels:
+            app: greedy-app
+        spec:
+          containers:
+          - name: busybox
+            image: busybox
+            args:
+            - sleep
+            - "5"
+          nodeSelector:
+            gpu: autoscale-to-zero
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - greedy-app
+                topologyKey: "kubernetes.io/hostname"
+          tolerations:
+          - key: reserved-pool
+            operator: Equal
+            value: "true"
+            effect: NoSchedule
+          restartPolicy: OnFailure

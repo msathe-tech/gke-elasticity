@@ -8,7 +8,16 @@ With that the nodes too will scale down to zero.
 
 
 Following is the 
-![architecture](hpc-jobs-gke-autoscale.png) of this demos.
+![app architecture](hpc-jobs-gke-autoscale.png) 
+![hpa1](hpa1.png) 
+![hpa2](hpa2.png) 
+![hpa3](hpa3.png) 
+![hpa4](hpa4.png) 
+
+
+of this demos.
+
+
 
 ## Prereq
 The demo is currently hardcoded to a project name and topics/subscriptions in the project. 

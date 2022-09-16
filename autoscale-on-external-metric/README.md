@@ -9,10 +9,10 @@ With that the nodes too will scale down to zero.
 
 Following is the 
 ![app architecture](hpc-jobs-gke-autoscale.png) 
-![hpa1](hpa1.png) 
-![hpa2](hpa2.png) 
-![hpa3](hpa3.png) 
-![hpa4](hpa4.png) 
+![hpc1](hpc1.jpg) 
+![hpc2](hpc2.jpg) 
+![hpc3](hpc3.jpg) 
+![hpc4](hpc4.jpg) 
 
 
 of this demos.

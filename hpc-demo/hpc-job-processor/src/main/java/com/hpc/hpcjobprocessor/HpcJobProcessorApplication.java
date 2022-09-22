@@ -72,6 +72,7 @@ public class HpcJobProcessorApplication {
       fw = new FileWriter(FILE_PATH, true);
       bw = new BufferedWriter(fw);
       bw.write(payload);
+      bw.write("proccessed by Pod " + System.getenv().get("POD_NAME") + " on Node " + System.getenv().get("NODE_NAME"));
       bw.newLine();
       bw.close();
     } catch (IOException ioe) {

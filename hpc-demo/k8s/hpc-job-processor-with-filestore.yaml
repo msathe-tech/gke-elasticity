@@ -17,7 +17,7 @@ spec:
       - command:
           - "/bin/sh"
           - "-c"
-          - "touch /html/${NODE_NAME}_${HOSTNAME}"
+          - "touch /hpc/${NODE_NAME}_${HOSTNAME}"
         image: busybox
         name: init-container-msg-container-init
         env:

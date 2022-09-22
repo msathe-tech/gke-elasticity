@@ -22,20 +22,17 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.support.GenericMessage;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.BufferedWriter;
 
 @SpringBootApplication
 public class HpcJobProcessorApplication {
 
 	private static final Log LOGGER = (Log) LogFactory.getLog(HpcJobProcessorApplication.class);
-  private static final String FILE_PATH = new String("/hpc/")
-    .concat(System.getenv().get("NODE_NAME"))
-    .concat("_")
-    .concat(System.getenv().get("POD_NAME"));
-  private static final FileWriter fw = new FileWriter(FILE_PATH, true);
-  private static final BufferedWriter bw = new BufferedWriter(fw);
+  
 	public static void main(String[] args) {
 		SpringApplication.run(HpcJobProcessorApplication.class, args);
+    
 	}
 
 	// [START pubsub_spring_inbound_channel_adapter]
@@ -65,8 +62,23 @@ public class HpcJobProcessorApplication {
       String payload,
       @Header(GcpPubSubHeaders.ORIGINAL_MESSAGE) BasicAcknowledgeablePubsubMessage message) {
     LOGGER.info("Message arrived via an inbound channel adapter from projects/prj-gke-mt-spike/subscriptions/sub-one! Payload: " + payload);
-    bw.write(payload);
-    bw.newLine();
+    String FILE_PATH = new String("/hpc/")
+      .concat(System.getenv().get("NODE_NAME"))
+      .concat("_")
+      .concat(System.getenv().get("POD_NAME"));
+    FileWriter fw;
+    BufferedWriter bw;
+    try {
+      fw = new FileWriter(FILE_PATH, true);
+      bw = new BufferedWriter(fw);
+      bw.write(payload);
+      bw.newLine();
+      bw.close();
+    } catch (IOException ioe) {
+      LOGGER.info("Failed to write to file");
+      ioe.printStackTrace();
+    }
+    
     // try {
     //   LOGGER.info("Begin processing the Payload: " + payload);
     //     Thread.sleep(60000);

@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hpc-job-processor
+  name: hpc-job-processor-with-nfs
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hpc-job-processor
+      app: hpc-job-processor-with-nfs
   template:
     metadata:
-      name: hpc-job-processor
+      name: hpc-job-processor-with-nfs
       labels:
-        app: hpc-job-processor
+        app: hpc-job-processor-with-nfs
     spec:
       initContainers:
       - command:
@@ -30,7 +30,7 @@ spec:
           name: fileserver
       containers:
       - name: hpc-job-processor
-        image: us-east4-docker.pkg.dev/prj-gke-mt-spike/hpc-gke/hpc-job-processor:latest
+        image: us-east4-docker.pkg.dev/prj-gke-mt-spike/hpc-gke/hpc-job-processor-with-nfs:latest
         imagePullPolicy: Always
         env:
           - name: NODE_NAME
@@ -55,7 +55,7 @@ spec:
               - key: app
                 operator: In
                 values:
-                - hpc-job-processor
+                - hpc-job-processor-with-nfs
             topologyKey: "kubernetes.io/hostname"
       tolerations:
       - key: reserved-pool

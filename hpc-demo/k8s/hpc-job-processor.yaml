@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hpc-job-processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hpc-job-processor
+  template:
+    metadata:
+      name: hpc-job-processor
+      labels:
+        app: hpc-job-processor
+    spec:
+      containers:
+      - name: hpc-job-processor
+        image: us-east4-docker.pkg.dev/prj-gke-mt-spike/hpc-gke/hpc-job-processor:latest
+        imagePullPolicy: Always
+      nodeSelector:
+        gpu: autoscale-to-zero
+        iam.gke.io/gke-metadata-server-enabled: "true"
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - hpc-job-processor
+            topologyKey: "kubernetes.io/hostname"
+      tolerations:
+      - key: reserved-pool
+        operator: Equal
+        value: "true"
+        effect: NoSchedule

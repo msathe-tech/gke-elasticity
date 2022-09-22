@@ -21,10 +21,19 @@ import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.support.GenericMessage;
 
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+
 @SpringBootApplication
 public class HpcJobProcessorApplication {
 
 	private static final Log LOGGER = (Log) LogFactory.getLog(HpcJobProcessorApplication.class);
+  private static final String FILE_PATH = new String("/hpc/")
+    .concat(System.getenv().get("NODE_NAME"))
+    .concat("_")
+    .concat(System.getenv().get("POD_NAME"));
+  private static final FileWriter fw = new FileWriter(FILE_PATH, true);
+  private static final BufferedWriter bw = new BufferedWriter(fw);
 	public static void main(String[] args) {
 		SpringApplication.run(HpcJobProcessorApplication.class, args);
 	}
@@ -56,6 +65,8 @@ public class HpcJobProcessorApplication {
       String payload,
       @Header(GcpPubSubHeaders.ORIGINAL_MESSAGE) BasicAcknowledgeablePubsubMessage message) {
     LOGGER.info("Message arrived via an inbound channel adapter from projects/prj-gke-mt-spike/subscriptions/sub-one! Payload: " + payload);
+    bw.write(payload);
+    bw.newLine();
     // try {
     //   LOGGER.info("Begin processing the Payload: " + payload);
     //     Thread.sleep(60000);

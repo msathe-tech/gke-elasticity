@@ -47,16 +47,6 @@ spec:
       nodeSelector:
         gpu: autoscale-to-zero
         iam.gke.io/gke-metadata-server-enabled: "true"
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - hpc-job-processor
-            topologyKey: "kubernetes.io/hostname"
       tolerations:
       - key: reserved-pool
         operator: Equal

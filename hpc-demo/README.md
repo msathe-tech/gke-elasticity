@@ -44,7 +44,25 @@ gcloud container node-pools create ${GKE_BURST_POOL} \
        --node-version=${GKE_VERSION} \
        --workload-metadata=GKE_METADATA
 
+gcloud container node-pools create ${GKE_BURST_POOL} \
+       --cluster=${GKE_CLUSTER_NAME} \
+       --machine-type=n1-standard-2 \
+       --node-labels=gpu=autoscale-to-zero \
+       --node-taints=reserved-pool=true:NoSchedule  \
+       --num-nodes=0 \
+       --enable-autoscaling \
+       --min-nodes=0 \
+       --max-nodes=4 \
+       --zone=${GCP_ZONE} \
+       --project=${PROJECT_ID} \
+       --node-version=${GKE_VERSION} \
+       --workload-metadata=GKE_METADATA \
+       --max-pods-per-node=12
+
+
 cd k8s
-kubectl apply -f hpc-job-processor.yaml -n burst
-kubectl apply -f hpc-job-processor-hpa.yaml -n burst
+kubectl apply -f filestore-storage-class.yaml
+kubectl apply -f pvc.yaml -n burst
+kubectl apply -f hpc-job-processor-with-filestore-wo-antiaffinity.yaml -n burst
+kubectl apply -f hpc-job-processor-hpa-100.yaml -n burst
 ```

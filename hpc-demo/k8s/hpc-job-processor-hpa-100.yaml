@@ -7,14 +7,14 @@ spec:
   behavior:
     scaleUp:
       policies:
-        - periodSeconds: 60
-          type: Percent
-          value: 400
+        - periodSeconds: 10
+          type: Pods
+          value: 4
     scaleDown:
       stabilizationWindowSeconds: 5
       policies:
       - type: Pods
-        value: 1
+        value: 5
         periodSeconds: 5
   minReplicas: 1
   maxReplicas: 16

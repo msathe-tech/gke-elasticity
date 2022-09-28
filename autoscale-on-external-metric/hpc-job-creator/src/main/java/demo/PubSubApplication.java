@@ -41,11 +41,14 @@ import org.springframework.messaging.handler.annotation.Header;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
+import java.time.format.DateTimeFormatter;  
+import java.time.LocalDateTime;    
 @SpringBootApplication
 public class PubSubApplication {
 
   private static final Log LOGGER = LogFactory.getLog(PubSubApplication.class);
   private static final Random rand = new Random(2020);
+  private long index = 0; 
 
   public static void main(String[] args) {
     SpringApplication.run(PubSubApplication.class, args);
@@ -63,9 +66,10 @@ public class PubSubApplication {
                   // } catch (InterruptedException e) {
                   //   // Stop sleep earlier.
                   // }
-
                   Message<String> message =
-                      MessageBuilder.withPayload("message-" + rand.nextInt(1000)).build();
+                      // MessageBuilder.withPayload("message-" + rand.nextInt(1000)).build();
+                      MessageBuilder.withPayload("message-" + index).build();
+                  index++;
                   LOGGER.info(
                       "Sending a message via the output binder to projects/prj-gke-mt-spike/topics/topic-one! Payload: "
                           + message.getPayload());

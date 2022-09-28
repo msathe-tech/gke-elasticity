@@ -9,7 +9,7 @@ spec:
       policies:
         - periodSeconds: 10
           type: Pods
-          value: 4
+          value: 100
     scaleDown:
       stabilizationWindowSeconds: 5
       policies:
@@ -17,7 +17,7 @@ spec:
         value: 5
         periodSeconds: 5
   minReplicas: 1
-  maxReplicas: 16
+  maxReplicas: 700
   metrics:
   - external:
       metric:

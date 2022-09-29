@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hpc-job-processor
+  namespace: burst
 spec:
   replicas: 1
   selector:
@@ -38,6 +39,9 @@ spec:
       - name: hpc-job-processor
         image: us-east4-docker.pkg.dev/prj-gke-mt-spike/hpc-gke/hpc-job-processor-with-nfs:latest
         imagePullPolicy: Always
+        resources:
+          limits:
+            memory: 768Mi
         env:
           - name: NODE_NAME
             valueFrom:

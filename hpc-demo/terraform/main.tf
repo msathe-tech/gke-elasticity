@@ -46,18 +46,56 @@ resource "google_container_cluster" "primary" {
   }
 }
 
-provider "kubectl" {
-  host                   = google_container_cluster.primary.endpoint
-  //client_key             = google_container_cluster.primary.master_auth.0.client_key
-  //client_certificate     = google_container_cluster.primary.master_auth.0.client_certificate
-  //cluster_ca_certificate = google_container_cluster.primary.master_auth.0.cluster_ca_certificate
-  load_config_file       = false
+data "google_client_config" "provider" {}
+
+provider "kubernetes" {
+  host                   = "https://${google_container_cluster.primary.endpoint}"
+  cluster_ca_certificate = base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)
+  token                  = data.google_client_config.provider.access_token
 }
 
-data "http" "adapter_new_resource_model_yaml" {
-  url = "https://raw.githubusercontent.com/GoogleCloudPlatform/k8s-stackdriver/master/custom-metrics-stackdriver-adapter/deploy/production/adapter_new_resource_model.yaml"
-}
+resource "kubernetes_deployment" "nginx" {
+  metadata {
+    name = "scalable-nginx-example"
+    labels = {
+      App = "ScalableNginxExample"
+    }
+  }
 
-resource "kubectl_manifest" "my_service" {
-  yaml_body = data.http.adapter_new_resource_model_yaml.response_body
+  spec {
+    replicas = 2
+    selector {
+      match_labels = {
+        App = "ScalableNginxExample"
+      }
+    }
+    template {
+      metadata {
+        labels = {
+          App = "ScalableNginxExample"
+        }
+      }
+      spec {
+        container {
+          image = "nginx:1.7.8"
+          name  = "example"
+
+          port {
+            container_port = 80
+          }
+
+          resources {
+            limits = {
+              cpu    = "0.5"
+              memory = "512Mi"
+            }
+            requests = {
+              cpu    = "250m"
+              memory = "50Mi"
+            }
+          }
+        }
+      }
+    }
+  }
 }

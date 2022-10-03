@@ -175,3 +175,9 @@ subjects:
 - kind: ServiceAccount
   name: horizontal-pod-autoscaler
   namespace: kube-system
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: burst
+

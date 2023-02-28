@@ -40,10 +40,10 @@ public class PubSubApplicationIT {
   private PrintStream out;
 
   private static final String projectId = System.getenv("GOOGLE_CLOUD_PROJECT");
-  private static final String topicOneId = "projects/prj-gke-mt-spike/topics/topic-one";
-  private static final String topicTwoId = "projects/prj-gke-mt-spike/topics/topic-two";
-  private static final String subscriptionOneId = "projects/prj-gke-mt-spike/subscriptions/sub-one";
-  private static final String subscriptionTwoId = "projects/prj-gke-mt-spike/subscriptions/sub-two";
+  private static final String topicOneId = "projects/hpc-feb-2023/topics/topic-one";
+  private static final String topicTwoId = "projects/hpc-feb-2023/topics/topic-two";
+  private static final String subscriptionOneId = "projects/hpc-feb-2023/subscriptions/sub-one";
+  private static final String subscriptionTwoId = "projects/hpc-feb-2023/subscriptions/sub-two";
 
   private static void requireEnvVar(String varName) {
     assertNotNull(
@@ -109,11 +109,11 @@ public class PubSubApplicationIT {
     TimeUnit.MINUTES.sleep(1);
 
     assertThat(bout.toString()).contains("Started PubSubApplication");
-    assertThat(bout.toString()).contains("Sending a message via the output binder to projects/prj-gke-mt-spike/topics/topic-one!");
+    assertThat(bout.toString()).contains("Sending a message via the output binder to projects/hpc-feb-2023/topics/topic-one!");
     assertThat(bout.toString())
-        .contains("Message arrived via an inbound channel adapter from projects/prj-gke-mt-spike/subscriptions/sub-one!");
+        .contains("Message arrived via an inbound channel adapter from projects/hpc-feb-2023/subscriptions/sub-one!");
     assertThat(bout.toString())
-        .contains("Message was sent via the outbound channel adapter to projects/prj-gke-mt-spike/topics/topic-two!");
-    assertThat(bout.toString()).contains("Message arrived via an input binder from projects/prj-gke-mt-spike/topics/topic-two!");
+        .contains("Message was sent via the outbound channel adapter to projects/hpc-feb-2023/topics/topic-two!");
+    assertThat(bout.toString()).contains("Message arrived via an input binder from projects/hpc-feb-2023/topics/topic-two!");
   }
 }

@@ -55,7 +55,7 @@ public class PubSubApplication {
   }
 
   // [START pubsub_spring_cloud_stream_output_binder]
-  // Create an output binder to send messages to `projects/prj-gke-mt-spike/topics/topic-one` using a Supplier bean.
+  // Create an output binder to send messages to `projects/hpc-feb-2023/topics/topic-one` using a Supplier bean.
   @Bean
   public Supplier<Flux<Message<String>>> sendMessageToTopicOne() {
     return () ->
@@ -71,7 +71,7 @@ public class PubSubApplication {
                       MessageBuilder.withPayload("message-" + index).build();
                   index++;
                   LOGGER.info(
-                      "Sending a message via the output binder to projects/prj-gke-mt-spike/topics/topic-one! Payload: "
+                      "Sending a message via the output binder to projects/hpc-feb-2023/topics/topic-one! Payload: "
                           + message.getPayload());
                   sink.next(message);
                 })

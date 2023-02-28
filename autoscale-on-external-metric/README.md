@@ -22,15 +22,15 @@ of this demos.
 ## Prereq
 The demo is currently hardcoded to a project name and topics/subscriptions in the project. 
 Following is the project name 
-- prj-gke-mt-spike
+- hpc-feb-2023
 Following are the topics we need to configure 
-- projects/prj-gke-mt-spike/topics/topic-one
-- projects/prj-gke-mt-spike/topics/topic-two
+- projects/hpc-feb-2023/topics/topic-one
+- projects/hpc-feb-2023/topics/topic-two
 
 Following are the subscriptions we need to configure 
-- projects/prj-gke-mt-spike/subscriptions/sub-one
+- projects/hpc-feb-2023/subscriptions/sub-one
   - Please configure this Subscription to use a Label `subscription_id: sub-one`
-- projects/prj-gke-mt-spike/subscriptions/sub-two
+- projects/hpc-feb-2023/subscriptions/sub-two
 
 ## Logical steps 
 1. Create a regular GKE cluster 
@@ -42,13 +42,14 @@ Following are the subscriptions we need to configure
 ## GKE setup
 ```
 . ./setenv
+gcloud config set project ${PROJECT_ID}
 gcloud container clusters create ${GKE_CLUSTER_NAME} \
-       --machine-type=g1-small \
+       --machine-type=e2-medium \
        --num-nodes=1 \
        --enable-autoscaling --min-nodes "0" --max-nodes "3" \
        --zone=${GCP_ZONE} \
        --project=${PROJECT_ID} \
-       --cluster-version "1.24.3-gke.200" --release-channel "rapid" \
+       --cluster-version "1.24.9-gke.3200" --release-channel "stable" \
        --enable-ip-alias \
        --default-max-pods-per-node 50 \
        --autoscaling-profile optimize-utilization
@@ -59,12 +60,24 @@ gcloud container clusters update ${GKE_CLUSTER_NAME} \
     --zone=${GCP_ZONE} \
     --workload-pool=${PROJECT_ID}.svc.id.goog
 
+gcloud iam service-accounts create ${GCP_SA} \
+    --project=${PROJECT_ID}
+
+gcloud projects add-iam-policy-binding ${PROJECT_ID}\
+  --member=serviceAccount:${GCP_SA}@${PROJECT_ID}.iam.gserviceaccount.com \
+  --role=roles/monitoring.metricWriter \
+  --role=roles/pubsub.editor
+
 kubectl create ns burst 
+
+gcloud iam service-accounts add-iam-policy-binding ${GCP_SA}@${PROJECT_ID}.iam.gserviceaccount.com \
+    --role roles/iam.workloadIdentityUser \
+    --member "serviceAccount:${PROJECT_ID}.svc.id.goog[burst/default]"
 
 kubectl annotate serviceaccount \
   --namespace burst \
   default \
-  iam.gke.io/gcp-service-account=burst-sa@${PROJECT_ID}.iam.gserviceaccount.com \
+  iam.gke.io/gcp-service-account=${GCP_SA}@${PROJECT_ID}.iam.gserviceaccount.com \
   --overwrite=true
 
 gcloud container node-pools create ${GKE_BURST_POOL} \
@@ -78,7 +91,7 @@ gcloud container node-pools create ${GKE_BURST_POOL} \
        --max-nodes=4 \
        --zone=${GCP_ZONE} \
        --project=${PROJECT_ID} \
-       --node-version="1.24.3-gke.200" \
+       --node-version=${GKE_VERSION} \
        --workload-metadata=GKE_METADATA
 
 cd k8s

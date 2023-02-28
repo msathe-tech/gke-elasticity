@@ -30,20 +30,20 @@ public class HpcJobProcessorApplication {
 	}
 
 	// [START pubsub_spring_inbound_channel_adapter]
-  // Create a message channel for messages arriving from the subscription `projects/prj-gke-mt-spike/subscriptions/sub-one`.
+  // Create a message channel for messages arriving from the subscription `projects/hpc-feb-2023/subscriptions/sub-one`.
   @Bean
   public MessageChannel inputMessageChannel() {
     return new PublishSubscribeChannel();
   }
 
-  // Create an inbound channel adapter to listen to the subscription `projects/prj-gke-mt-spike/subscriptions/sub-one` and send
+  // Create an inbound channel adapter to listen to the subscription `projects/hpc-feb-2023/subscriptions/sub-one` and send
   // messages to the input message channel.
   @Bean
   public PubSubInboundChannelAdapter inboundChannelAdapter(
       @Qualifier("inputMessageChannel") MessageChannel messageChannel,
       PubSubTemplate pubSubTemplate) {
     PubSubInboundChannelAdapter adapter =
-        new PubSubInboundChannelAdapter(pubSubTemplate, "projects/prj-gke-mt-spike/subscriptions/sub-one");
+        new PubSubInboundChannelAdapter(pubSubTemplate, "projects/hpc-feb-2023/subscriptions/sub-one");
     adapter.setOutputChannel(messageChannel);
     adapter.setAckMode(AckMode.MANUAL);
     adapter.setPayloadType(String.class);
@@ -55,7 +55,7 @@ public class HpcJobProcessorApplication {
   public void messageReceiver(
       String payload,
       @Header(GcpPubSubHeaders.ORIGINAL_MESSAGE) BasicAcknowledgeablePubsubMessage message) {
-    LOGGER.info("Message arrived via an inbound channel adapter from projects/prj-gke-mt-spike/subscriptions/sub-one! Payload: " + payload);
+    LOGGER.info("Message arrived via an inbound channel adapter from projects/hpc-feb-2023/subscriptions/sub-one! Payload: " + payload);
     // try {
     //   LOGGER.info("Begin processing the Payload: " + payload);
     //     Thread.sleep(60000);
@@ -68,11 +68,11 @@ public class HpcJobProcessorApplication {
 
   // [START pubsub_spring_outbound_channel_adapter]
   // Create an outbound channel adapter to send messages from the input message channel to the
-  // topic `projects/prj-gke-mt-spike/topics/topic-two`.
+  // topic `projects/hpc-feb-2023/topics/topic-two`.
   @Bean
   @ServiceActivator(inputChannel = "inputMessageChannel")
   public MessageHandler messageSender(PubSubTemplate pubsubTemplate) {
-    PubSubMessageHandler adapter = new PubSubMessageHandler(pubsubTemplate, "projects/prj-gke-mt-spike/topics/topic-two");
+    PubSubMessageHandler adapter = new PubSubMessageHandler(pubsubTemplate, "projects/hpc-feb-2023/topics/topic-two");
 
     adapter.setSuccessCallback(
         ((ackId, message) ->
@@ -88,7 +88,7 @@ public class HpcJobProcessorApplication {
 
   private void extracted(final Message<?> message) {
     String payload = message.getPayload().toString();
-    LOGGER.info("Finished Processing Payload: " + payload + ". Message was sent via the outbound channel adapter to projects/prj-gke-mt-spike/topics/topic-two!");
+    LOGGER.info("Finished Processing Payload: " + payload + ". Message was sent via the outbound channel adapter to projects/hpc-feb-2023/topics/topic-two!");
     // try {
     //   LOGGER.info("Begin processing the Payload: " + payload);
     //     Thread.sleep(1000);

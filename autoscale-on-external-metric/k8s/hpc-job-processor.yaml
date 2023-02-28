@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: hpc-job-processor
-        image: us-east4-docker.pkg.dev/prj-gke-mt-spike/hpc-gke/hpc-job-processor:latest
+        image: us-east4-docker.pkg.dev/hpc-feb-2023/hpc-gke/hpc-job-processor:latest
         imagePullPolicy: Always
       nodeSelector:
         gpu: autoscale-to-zero
